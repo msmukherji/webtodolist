@@ -34,7 +34,7 @@ class Webtodo < Sinatra::Base
 # PRINT ALL ITEMS (UNDONE ONLY?) ON ALL LISTS => KIND OF WORKS
   get '/lists' do
     items = []
-    l = List.order(id: :asc)#.to_json  
+    l = List.order(id: :asc)#.to_json => can't each over json.
     l.each do |list|
       list_id = list.id
       i = Item.where list_id: list_id
@@ -43,15 +43,14 @@ class Webtodo < Sinatra::Base
         items << "#{list.name}: #{item.name}, Due: #{item.due}, Done? #{item.completed}\n\n" # #{item.list_id}"
       end
     end
-    items
+    items # need to return a string
   end
 
 # CREATE NEW LIST => WORKS
   post '/lists' do
     #List.current_user.lists.find_or_create! name: params["name"]
     l = List.create! name: params["name"]
-    l.to_json #print params["name"]
-    #redirect
+    l.to_json
   end
 
 # LOOK AT ALL ITEMS => WORKS
@@ -67,16 +66,21 @@ class Webtodo < Sinatra::Base
   end
 
   
-
 # ADD A DUE DATE TO AN ITEM
-  # patch '/items/:id' do
-  #   Item.find(params[:id]).add_duedate params["duedate"]
-  # end
+  post '/items/:name' do
+    i = Item.find_by_name(params[:name])
+    if params["due"]
+      i.add_duedate params["due"]
+    end
+    if params["completed"] != nil
+      i.done!
+    end
+    i.to_json
+  end
 
-# MARK AN ITEM AS COMPLETED
-  # post 'items/:id' do
-  #   Item.find(params[:id]).add_done #params["completed"]
-  # end
+
+# NEXT ITEM
+# SEARCH ITEMS
 
 end
 

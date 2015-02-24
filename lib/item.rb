@@ -1,11 +1,11 @@
 class Item < ActiveRecord::Base
   belongs_to :list
 
-  def add_duedate duedate
-    #Item.due = duedate.date.parse
+  def add_duedate duedate #self.add_duedate?
+    update due: Date.parse(duedate)
   end
 
-  def add_done
-    Item.completed = "true"
+  def done!
+    update completed: true
   end
 end
