@@ -58,16 +58,16 @@ class Webtodo < Sinatra::Base
     Item.order(id: :asc).to_json
   end
 
-# CREATE A NEW ITEM ON A LIST => WORKS!!!!!
+# CREATE A NEW ITEM ON A LIST => WORKS!!!!! or, did...
   post '/items' do
     l = List.find_or_create_by! name: params["list_name"]
     list_id = l.id
-    i = Item.create! name: params["name"], list_id: list_id, due: params["due"]
+    i = Item.create! name: params["name"], list_id: list_id, due: params["due"], list_name:["list_name"]
     i.to_json
   end
 
   
-# ADD A DUE DATE TO AN ITEM OR MARK AS COMPLETED
+# ADD A DUE DATE TO AN ITEM OR MARK AS COMPLETED => WORKS
   post '/items/:name' do
     i = Item.find_by_name(params[:name])
     if params["due"]
@@ -80,7 +80,12 @@ class Webtodo < Sinatra::Base
   end
 
 
-# NEXT ITEM
+# NEXT ITEM => WORKS!!
+  get '/items/next' do
+    i = Item.next_item
+    i.to_json
+  end
+
 # SEARCH ITEMS
 
 end
