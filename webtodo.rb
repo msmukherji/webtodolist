@@ -31,7 +31,7 @@ class Webtodo < Sinatra::Base
     i.to_json
   end
 
-# PRINT ALL ITEMS (UNDONE ONLY?) ON ALL LISTS => KIND OF WORKS
+# PRINT ALL ITEMS ON ALL LISTS => KIND OF WORKS, NOT FILTERED BY DONENESS
   get '/lists' do
     items = []
     l = List.order(id: :asc)#.to_json => can't each over json.
@@ -49,7 +49,7 @@ class Webtodo < Sinatra::Base
 # CREATE NEW LIST => WORKS
   post '/lists' do
     #List.current_user.lists.find_or_create! name: params["name"]
-    l = List.create! name: params["name"]
+    l = List.find_or_create_by! name: params["name"]
     l.to_json
   end
 
@@ -58,15 +58,16 @@ class Webtodo < Sinatra::Base
     Item.order(id: :asc).to_json
   end
 
-# CREATE A NEW ITEM ON A LIST => WORKS
+# CREATE A NEW ITEM ON A LIST => WORKS!!!!!
   post '/items' do
-    #i = Item.find_or_create! name: params["name"], list_id: params["list_id"]#, due: params["due"], list_id: params["list_id"]
-    i = Item.create! name: params["name"], list_id: params["list_id"], due: params["due"]
+    l = List.find_or_create_by! name: params["list_name"]
+    list_id = l.id
+    i = Item.create! name: params["name"], list_id: list_id, due: params["due"]
     i.to_json
   end
 
   
-# ADD A DUE DATE TO AN ITEM
+# ADD A DUE DATE TO AN ITEM OR MARK AS COMPLETED
   post '/items/:name' do
     i = Item.find_by_name(params[:name])
     if params["due"]
