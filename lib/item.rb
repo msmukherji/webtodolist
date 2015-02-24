@@ -11,10 +11,14 @@ class Item < ActiveRecord::Base
 
   def self.next_item
   # Item.where(completed != true) => doesn't recognize this
+    i = 0 # => I think this fixes it so the right thing is returned?
     loop do
       i = Item.order("RANDOM()").first
-      return i
-      break if i.completed != true
+      #return i
+      break if i.completed == nil
+      #return i
+      binding.pry
     end
+    return i
   end
 end
